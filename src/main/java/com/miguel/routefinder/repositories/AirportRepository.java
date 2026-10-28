@@ -65,7 +65,6 @@ public class AirportRepository {
             statement.setDouble(5, airport.getLongitude());
             statement.setDouble(4, airport.getLatitude());
 
-
             int rows = statement.executeUpdate();
             return rows > 0;
 

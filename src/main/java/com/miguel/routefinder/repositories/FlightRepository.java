@@ -1,0 +1,79 @@
+package com.miguel.routefinder.repositories;
+
+import com.miguel.routefinder.model.Airport;
+import com.miguel.routefinder.model.Flight;
+
+import java.sql.*;
+import java.time.LocalDateTime;
+
+public class FlightRepository {
+    public Flight findFlight(Airport origin, Airport destination){
+        String SQL = "SELECT * FROM Flight WHERE OriginAirportID = ? AND DestinationAirportID = ? " +
+                "ORDER BY julianday(ArrivalDateTime) - julianday(DepartureDateTime) LIMIT 1";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(SQL)) {
+
+            statement.setInt(1, origin.getAirportID());
+            statement.setInt(2, destination.getAirportID());
+            ResultSet results = statement.executeQuery();
+
+            if (results.next()) {
+                Flight flight = new Flight();
+                flight.setFlightID(results.getInt("FlightID"));
+                flight.setOriginAirportID(results.getInt("OriginAirportID"));
+                flight.setDestinationAirportID(results.getInt("DestinationAirportID"));
+                flight.setArrivalDateTime(LocalDateTime.parse(results.getString("ArrivalDateTime")));
+                flight.setDepartureDateTime(LocalDateTime.parse(results.getString("DepartureDateTime")));
+                return flight;
+            }
+            return null;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public boolean insertFlight(Flight flight){
+        String SQL = "INSERT INTO Flight (OriginAirportID, DestinationAirportID, ArrivalDateTime, DepartureDateTime) VALUES (?, ?, ?, ?)";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(SQL)) {
+
+            statement.setInt(1, flight.getOriginAirportID());
+            statement.setInt(2, flight.getDestinationAirportID());
+            statement.setString(3, flight.getArrivalDateTime().toString());
+            statement.setString(4, flight.getDepartureDateTime().toString());
+
+            int rows = statement.executeUpdate();
+            return rows > 0;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean updateFlight(int flightID, Flight flight){
+        String SQL = "UPDATE Flight SET OriginAirportID = ?, DestinationAirportID = ?, ArrivalDateTime = ?, DepartureDateTime = ? WHERE FlightID = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(SQL)) {
+
+            statement.setInt(1, flight.getOriginAirportID());
+            statement.setInt(2, flight.getDestinationAirportID());
+            statement.setString(3, flight.getArrivalDateTime().toString());
+            statement.setString(4, flight.getDepartureDateTime().toString());
+            statement.setInt(5, flightID);
+
+            int rows = statement.executeUpdate();
+            return rows > 0;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    private Connection getConnection() throws SQLException {
+        return DriverManager.getConnection("jdbc:sqlite:routefinder.db");
+    }
+}
