@@ -48,7 +48,10 @@ public class TripRepository {
 
     public List<Trip> getTripsByUser(int userID){
         List<Trip> trips = new ArrayList<>();
-        String SQL = "SELECT * FROM Trip WHERE UserID = ? ORDER BY TripID";
+        String SQL = "SELECT Trip.TripID, Trip.UserID FROM Trip " +
+                "LEFT JOIN TripItinerary ON Trip.TripID = TripItinerary.TripID " +
+                "LEFT JOIN Flight ON TripItinerary.FlightID = Flight.FlightID " +
+                "WHERE Trip.UserID = ? GROUP BY Trip.TripID ORDER BY MIN(Flight.DepartureDateTime)";
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL)) {
 
@@ -66,6 +69,25 @@ public class TripRepository {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return trips;
+        }
+    }
+    public List<Integer> getFlightIDsByTrip(int tripID){
+        List<Integer> flightIDs = new ArrayList<>();
+        String SQL = "SELECT FlightID FROM TripItinerary WHERE TripID = ? ORDER BY LegOrder";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(SQL)) {
+
+            statement.setInt(1, tripID);
+            ResultSet results = statement.executeQuery();
+
+            while (results.next()) {
+                flightIDs.add(results.getInt("FlightID"));
+            }
+            return flightIDs;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return flightIDs;
         }
     }
 

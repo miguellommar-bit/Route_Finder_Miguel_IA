@@ -1,0 +1,6 @@
+body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 0 16px; }
+label { display: block; margin-top: 12px; }
+input { width: 100%; padding: 6px; box-sizing: border-box; }
+button { margin-top: 16px; padding: 8px 16px; }
+.message { background: #eef; padding: 8px; border-radius: 4px; }
+.menu li { margin: 8px 0; }

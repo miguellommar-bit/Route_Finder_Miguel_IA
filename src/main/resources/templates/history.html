@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Route Finder - History</title>
+  <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+<h1>Your flight history</h1>
+<p th:if="${#lists.isEmpty(trips)}">You have no trips yet.</p>
+<ol>
+  <li th:each="trip : ${trips}" th:text="${trip}"></li>
+</ol>
+<p><a th:href="@{/menu}">Back to menu</a></p>
+</body>
+</html>

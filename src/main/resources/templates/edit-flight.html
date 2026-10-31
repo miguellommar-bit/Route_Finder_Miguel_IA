@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Route Finder - Edit flight</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+<h1>Edit a flight</h1>
+<p class="message" th:if="${message}" th:text="${message}"></p>
+<form method="post" th:action="@{/admin/flight}">
+    <label>Flight ID</label>
+    <input type="number" name="flightID" required>
+    <label>Origin airport ID</label>
+    <input type="number" name="originID" required>
+    <label>Destination airport ID</label>
+    <input type="number" name="destinationID" required>
+    <label>Departure</label>
+    <input type="datetime-local" name="departure" required>
+    <label>Arrival</label>
+    <input type="datetime-local" name="arrival" required>
+    <button type="submit">Save changes</button>
+</form>
+<p><a th:href="@{/menu}">Back to menu</a></p>
+</body>
+</html>

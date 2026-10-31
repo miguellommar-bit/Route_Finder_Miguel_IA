@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Route Finder - Edit airport</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+<h1>Edit an airport</h1>
+<p class="message" th:if="${message}" th:text="${message}"></p>
+<form method="post" th:action="@{/admin/airport}">
+    <label>Airport ID</label>
+    <input type="number" name="airportID" required>
+    <label>Name</label>
+    <input type="text" name="name" required>
+    <label>City</label>
+    <input type="text" name="city" required>
+    <label>Country</label>
+    <input type="text" name="country" required>
+    <label>Latitude</label>
+    <input type="text" name="latitude" required>
+    <label>Longitude</label>
+    <input type="text" name="longitude" required>
+    <button type="submit">Save changes</button>
+</form>
+<p><a th:href="@{/menu}">Back to menu</a></p>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Route Finder - Menu</title>
+  <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+<h1>Route Finder</h1>
+<ul class="menu">
+  <li><a th:href="@{/route}">Find a route</a></li>
+  <li><a th:href="@{/history}">View flight history</a></li>
+  <li th:if="${isAdmin}"><a th:href="@{/admin/flight}">Edit a flight</a></li>
+  <li th:if="${isAdmin}"><a th:href="@{/admin/airport}">Edit an airport</a></li>
+  <li><a th:href="@{/logout}">Log out</a></li>
+</ul>
+</body>
+</html>

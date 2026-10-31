@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Route Finder - Log in</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+<h1>Route Finder</h1>
+<h2>Log in</h2>
+<p class="message" th:if="${message}" th:text="${message}"></p>
+<form method="post" th:action="@{/login}">
+    <label>Email</label>
+    <input type="email" name="email" required>
+    <label>Password</label>
+    <input type="password" name="password" required>
+    <button type="submit">Log in</button>
+</form>
+<p><a th:href="@{/signup}">Create an account</a></p>
+</body>
+</html>
