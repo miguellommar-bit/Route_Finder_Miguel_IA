@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Route Finder - Tickets</title>
+  <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+<h1>Tickets purchased</h1>
+<p class="message">Trip <span th:text="${tripID}"></span> has been added to your flight history.</p>
+<ol>
+  <li th:each="leg : ${legs}" th:text="${leg}"></li>
+</ol>
+<p>Total travel time: <span th:text="${totalTime}"></span> hours</p>
+<p><a th:href="@{/history}">View flight history</a></p>
+<p><a th:href="@{/menu}">Back to menu</a></p>
+</body>
+</html>

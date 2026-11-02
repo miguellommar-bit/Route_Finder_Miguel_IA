@@ -4,12 +4,15 @@ import com.miguel.routefinder.model.User;
 
 import java.sql.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserRepository {
-    public boolean insertUser(User user){
-        String SQL = "INSERT INTO \"User\" (Email, HashPassword, Role, Name, Surname, DateOfBirth) VALUES (?, ?, ?, ?, ?, ?)";
+
+    public boolean insertUser(User user) {
+        String sql = "INSERT INTO \"User\" (Email, HashPassword, Role, Name, Surname, DateOfBirth) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL)) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, user.getEmail());
             statement.setString(2, user.getHashPassword());
@@ -31,10 +34,10 @@ public class UserRepository {
         }
     }
 
-    public User getUserByEmail(String email){
-        String SQL = "SELECT * FROM \"User\" WHERE Email = ?";
+    public User getUserByEmail(String email) {
+        String sql = "SELECT * FROM \"User\" WHERE Email = ?";
         try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL)) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, email);
             ResultSet results = statement.executeQuery();
@@ -58,6 +61,53 @@ public class UserRepository {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return null;
+        }
+    }
+
+    public List<User> getAllUsers() {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT * FROM \"User\" ORDER BY UserID";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            ResultSet results = statement.executeQuery();
+
+            while (results.next()) {
+                User user = new User();
+                user.setUserID(results.getInt("UserID"));
+                user.setEmail(results.getString("Email"));
+                user.setHashPassword(results.getString("HashPassword"));
+                user.setRole(results.getString("Role"));
+                user.setName(results.getString("Name"));
+                user.setSurname(results.getString("Surname"));
+                String dob = results.getString("DateOfBirth");
+                if (dob != null) {
+                    user.setDateOfBirth(LocalDate.parse(dob));
+                }
+                list.add(user);
+            }
+            return list;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return list;
+        }
+    }
+
+    public boolean updateUserRole(int userID, String role) {
+        String sql = "UPDATE \"User\" SET Role = ? WHERE UserID = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, role);
+            statement.setInt(2, userID);
+
+            int rows = statement.executeUpdate();
+            return rows > 0;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
         }
     }
 

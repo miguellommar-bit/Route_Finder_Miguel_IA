@@ -21,6 +21,11 @@
     <li th:each="leg : ${legs}" th:text="${leg}"></li>
   </ol>
   <p>Total travel time: <span th:text="${totalTime}"></span> hours</p>
+  <form method="post" th:action="@{/buy}">
+    <input type="hidden" name="origin" th:value="${originName}">
+    <input type="hidden" name="destination" th:value="${destinationName}">
+    <button type="submit">Buy tickets</button>
+  </form>
 </div>
 <p><a th:href="@{/menu}">Back to menu</a></p>
 </body>

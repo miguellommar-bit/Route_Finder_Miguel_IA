@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TripRepository {
-    // Returns the new TripID, or -1 if the insert failed
-    public int insertTrip(int userID){
-        String SQL = "INSERT INTO Trip (UserID) VALUES (?)";
+
+    public int insertTrip(int userID) {
+        String sql = "INSERT INTO Trip (UserID) VALUES (?)";
         try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setInt(1, userID);
             statement.executeUpdate();
@@ -28,10 +28,10 @@ public class TripRepository {
         }
     }
 
-    public boolean insertTripItinerary(int tripID, int flightID, int legOrder){
-        String SQL = "INSERT INTO TripItinerary (TripID, FlightID, LegOrder) VALUES (?, ?, ?)";
+    public boolean insertTripItinerary(int tripID, int flightID, int legOrder) {
+        String sql = "INSERT INTO TripItinerary (TripID, FlightID, LegOrder) VALUES (?, ?, ?)";
         try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL)) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setInt(1, tripID);
             statement.setInt(2, flightID);
@@ -46,14 +46,14 @@ public class TripRepository {
         }
     }
 
-    public List<Trip> getTripsByUser(int userID){
-        List<Trip> trips = new ArrayList<>();
-        String SQL = "SELECT Trip.TripID, Trip.UserID FROM Trip " +
+    public List<Trip> getTripsByUser(int userID) {
+        List<Trip> list = new ArrayList<>();
+        String sql = "SELECT Trip.TripID, Trip.UserID FROM Trip " +
                 "LEFT JOIN TripItinerary ON Trip.TripID = TripItinerary.TripID " +
                 "LEFT JOIN Flight ON TripItinerary.FlightID = Flight.FlightID " +
                 "WHERE Trip.UserID = ? GROUP BY Trip.TripID ORDER BY MIN(Flight.DepartureDateTime)";
         try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL)) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setInt(1, userID);
             ResultSet results = statement.executeQuery();
@@ -62,32 +62,33 @@ public class TripRepository {
                 Trip trip = new Trip();
                 trip.setTripID(results.getInt("TripID"));
                 trip.setUserID(results.getInt("UserID"));
-                trips.add(trip);
+                list.add(trip);
             }
-            return trips;
+            return list;
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            return trips;
+            return list;
         }
     }
-    public List<Integer> getFlightIDsByTrip(int tripID){
-        List<Integer> flightIDs = new ArrayList<>();
-        String SQL = "SELECT FlightID FROM TripItinerary WHERE TripID = ? ORDER BY LegOrder";
+
+    public List<Integer> getFlightIDsByTrip(int tripID) {
+        List<Integer> ids = new ArrayList<>();
+        String sql = "SELECT FlightID FROM TripItinerary WHERE TripID = ? ORDER BY LegOrder";
         try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL)) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setInt(1, tripID);
             ResultSet results = statement.executeQuery();
 
             while (results.next()) {
-                flightIDs.add(results.getInt("FlightID"));
+                ids.add(results.getInt("FlightID"));
             }
-            return flightIDs;
+            return ids;
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            return flightIDs;
+            return ids;
         }
     }
 

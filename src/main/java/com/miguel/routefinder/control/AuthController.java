@@ -1,14 +1,13 @@
 package com.miguel.routefinder.control;
-
-import com.miguel.routefinder.model.User;
 import com.miguel.routefinder.repositories.UserRepository;
+import com.miguel.routefinder.model.User;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class AuthController {
 
-    private UserRepository userRepository = new UserRepository();
+    private UserRepository userdb = new UserRepository();
 
     private String message = "";
 
@@ -17,17 +16,17 @@ public class AuthController {
     }
 
     public boolean login(String email, String password) {
-        User foundUser = userRepository.getUserByEmail(email);
+        User user = userdb.getUserByEmail(email);
 
-        if (foundUser == null) {
+        if (user == null) {
             message = "No account exists with that email.";
             return false;
         }
 
-        String storedHash = foundUser.getHashPassword();
-        boolean passwordCorrect = comparePassword(password, storedHash);
+        String hash = user.getHashPassword();
+        boolean correct = comparePassword(password, hash);
 
-        if (passwordCorrect == false) {
+        if (correct == false) {
             message = "Incorrect password.";
             return false;
         }
@@ -47,21 +46,21 @@ public class AuthController {
             return false;
         }
 
-        User existingUser = userRepository.getUserByEmail(email);
-        if (existingUser != null) {
+        User old = userdb.getUserByEmail(email);
+        if (old != null) {
             message = "An account with that email already exists.";
             return false;
         }
 
-        User newUser = new User();
-        newUser.setEmail(email);
-        newUser.setRole("traveller");
-        String hashedPassword = hashPassword(password);
-        newUser.setHashPassword(hashedPassword);
+        User user = new User();
+        user.setEmail(email);
+        user.setRole("traveller");
+        String hash = hashPassword(password);
+        user.setHashPassword(hash);
 
-        boolean inserted = userRepository.insertUser(newUser);
+        boolean ok = userdb.insertUser(user);
 
-        if (inserted == false) {
+        if (ok == false) {
             message = "Account could not be created. Please try again.";
             return false;
         }
@@ -72,16 +71,16 @@ public class AuthController {
 
     private String hashPassword(String password) {
         try {
-            MessageDigest digestTool = MessageDigest.getInstance("SHA-256");
-            byte[] hashBytes = digestTool.digest(password.getBytes());
+            MessageDigest tool = MessageDigest.getInstance("SHA-256");
+            byte[] bytes = tool.digest(password.getBytes());
 
-            String hashText = "";
-            for (int i = 0; i < hashBytes.length; i++) {
-                byte currentByte = hashBytes[i];
-                String hexPair = String.format("%02x", currentByte);
-                hashText = hashText + hexPair;
+            String text = "";
+            for (int i = 0; i < bytes.length; i++) {
+                byte one = bytes[i];
+                String pair = String.format("%02x", one);
+                text = text + pair;
             }
-            return hashText;
+            return text;
 
         } catch (NoSuchAlgorithmException e) {
             return null;
@@ -89,12 +88,12 @@ public class AuthController {
     }
 
     private boolean comparePassword(String input, String stored) {
-        String inputHash = hashPassword(input);
+        String hash = hashPassword(input);
 
-        if (inputHash == null) {
+        if (hash == null) {
             return false;
         }
-        if (inputHash.equals(stored)) {
+        if (hash.equals(stored)) {
             return true;
         } else {
             return false;
